@@ -6,7 +6,9 @@ import CommentSection from "../components/CommentSection";
 import PostCard from "../components/PostCard";
 import axios from "axios";
 
-const API_KEY = "AIzaSyCmgugrC69ejVxSUPm5Dpwy_XtjbNmBjbw"; // Replace with your actual API key
+const HF_TOKEN = import.meta.env.VITE_HF_TOKEN;
+const API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
+//const API_KEY = "AIzaSyCmgugrC69ejVxSUPm5Dpwy_XtjbNmBjbw"; // Replace with your actual API key
 const API_URL = "https://translation.googleapis.com/language/translate/v2";
 
 const languageOptions = [
@@ -57,54 +59,55 @@ export default function PostPage() {
     setAudioDuration(0);
     const halfContent = post.content.substring(0, 200);
 
-   const url =
-     "https://api-inference.huggingface.co/models/facebook/fastspeech2-en-ljspeech";
-   const options = {
-     method: "POST",
-     headers: {
-       Authorization: "Bearer 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",
-       "Content-Type": "application/json",
-     },
-     body: JSON.stringify({ inputs: halfContent }),
-   };
+    const url =
+      "https://api-inference.huggingface.co/models/facebook/fastspeech2-en-ljspeech";
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer  ${HF_TOKEN}`,
+        "Content-Type": "application/json",
+      },
 
-   try {
-     const response = await fetch(url, options);
+      body: JSON.stringify({ inputs: halfContent }),
+    };
 
-     if (!response.ok) {
-       throw new Error(`HTTP error! status: ${response.status}`);
-     }
+    try {
+      const response = await fetch(url, options);
 
-     const arrayBuffer = await response.arrayBuffer();
-     const audioBlob = new Blob([arrayBuffer], { type: "audio/flac" });
-     const audioUrl = URL.createObjectURL(audioBlob);
-     setAudioSrc(audioUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-     // Set audio duration
-     const audioElement = new Audio(audioUrl);
-     audioElement.addEventListener("loadedmetadata", () => {
-       setAudioDuration(audioElement.duration);
-     });
-   } catch (error) {
-     console.error("Error:", error);
-   } finally {
-     setloadingaudio(false);
-   }
- };
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBlob = new Blob([arrayBuffer], { type: "audio/flac" });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      setAudioSrc(audioUrl);
 
- const handlePlaybackSpeedChange = (speed) => {
-   setPlaybackSpeed(speed);
-   setShowSpeedOptions(false); // Hide speed options after selection
-   if (audioRef.current) {
-     audioRef.current.playbackRate = speed;
-   }
- };
+      // Set audio duration
+      const audioElement = new Audio(audioUrl);
+      audioElement.addEventListener("loadedmetadata", () => {
+        setAudioDuration(audioElement.duration);
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setloadingaudio(false);
+    }
+  };
 
- const handleAudioTimeUpdate = () => {
-   if (audioRef.current) {
-     setAudioCurrentTime(audioRef.current.currentTime);
-   }
- };
+  const handlePlaybackSpeedChange = (speed) => {
+    setPlaybackSpeed(speed);
+    setShowSpeedOptions(false); // Hide speed options after selection
+    if (audioRef.current) {
+      audioRef.current.playbackRate = speed;
+    }
+  };
+
+  const handleAudioTimeUpdate = () => {
+    if (audioRef.current) {
+      setAudioCurrentTime(audioRef.current.currentTime);
+    }
+  };
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -163,7 +166,7 @@ export default function PostPage() {
         {
           method: "POST",
           headers: {
-            Authorization: "Bearer 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",
+            Authorization:  `Bearer ${HF_TOKEN}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
