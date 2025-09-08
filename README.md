@@ -1,6 +1,4 @@
 # PublishHub
-# PublishHub
-
 ## Digital News Publishing and Reading Platform
 
 **PublishHub** is a comprehensive full-stack web application designed to empower independent writers and media houses to seamlessly publish and distribute news articles. Readers, in turn, can access a diverse range of content, enhanced by advanced features for a truly engaging and accessible user experience.
